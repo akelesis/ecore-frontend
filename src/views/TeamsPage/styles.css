@@ -1,0 +1,12 @@
+.teams-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.teams-list {
+    margin: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 90vw;
+}
