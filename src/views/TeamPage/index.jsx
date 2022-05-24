@@ -1,14 +1,16 @@
 import './styles.css'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { teamsUrl, usersUrl } from '../../globalUrls'
 
-const TeamPage = (props) => {
+const TeamPage = () => {
     const [team, setTeam] = useState({})
     const [teamLeader, setTeamLeader] = useState({})
     const [teamMembers, setTeamMembers] = useState([])
     const {id} = useParams()
+    const [isLoading, setIsLoading] = useState(true)
+
     useEffect(() => {
         const getTeam = async () => {
             try {
@@ -34,37 +36,35 @@ const TeamPage = (props) => {
                 console.log(err)
             }
         }
-        const getTeamMembers = async () => {
-            try {
-                const teamMembersList = await team.teamMemberIds.map(async memberId => {
-                    return await axios.get(usersUrl + memberId).then(res => res.data)
-                })
-                setTeamMembers(teamMembersList)
-                console.log(teamMembers)
-            }
-            catch(err) {
-                console.log(err)
-            }
+        const getTeamMembers = () => {
+            axios.get(usersUrl)
+                .then(res => res.data)
+                .then(res => res.filter(teamMember => team.teamMemberIds.includes(teamMember.id)))
+                .then(res => setTeamMembers(res))
+                .then(() => setIsLoading(false))
+                .catch(err => console.log(err))
         }
         getTeamLeader()
         getTeamMembers()
     },[team])
 
     const displayTeamMembers = () => {
-        return teamMembers.map(teamMember => <li key={teamMember.id}>{teamMember.displayName}</li>)
+        return teamMembers.map(teamMember => <li key={teamMember.id}><Link to={`/members/${id}/${teamMember.id}`}>{teamMember.displayName}</Link></li>)
     }
 
     return(
         <div className="team-page">
             <h1>Team Page</h1>
+            {isLoading ? <h3>Loading...</h3> :
             <div className="team-specs">
-                <h3>{team.name}</h3>
-                {teamLeader ? <p><strong>team leader:</strong> {`${teamLeader.displayName}`}</p>: ''}
+                <h3>{team.name ? team.name : ''}</h3>
+                {teamLeader ? <p><strong>team leader:</strong> <Link to={`/members/${id}/${teamLeader.id}`}>{`${teamLeader.displayName}`}</Link></p>: ''}
                 <p>Team members:</p>
                 <ul>
                     {teamMembers ? displayTeamMembers() : ''}
                 </ul>
-            </div>
+            </div>}
+            <Link to={`/`}>Return to Home page</Link>
         </div>
     )
 }

@@ -1,0 +1,9 @@
+.profile-picture {
+    width: 200px;
+    border-radius: 50%;
+}
+.member-page {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}

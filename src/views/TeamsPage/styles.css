@@ -10,3 +10,14 @@
     flex-wrap: wrap;
     width: 90vw;
 }
+
+.search-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.search-area button {
+    width: 300px;
+    padding: 10px;
+}
